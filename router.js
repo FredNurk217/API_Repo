@@ -86,12 +86,32 @@ router.get('/modelos', (req, res) => {
     });
 });
 
+
 //GET all vapes
 router.get('/vapes', (req, res) => {
     const client = new Client(connectionData);
     client.connect()
     .then(() => {
         return client.query('select v.*, s.sabor, m.modelo, mc.marca, m.precio from vape v inner join sabor s on v.fkid_sabor = s.id_sabor inner join modelo m on v.fkid_modelo = m.id_modelo inner join marca mc on m.fkid_marca = mc.id_marca;');
+    })
+    .then(result => {
+        res.status(200).send(result.rows);
+    })
+    .catch(error => {
+        console.error(error);
+        res.status(400).send('Error');
+    })
+    .finally(() => {
+        client.end();
+    });
+});
+
+//GET single vape
+router.get('/vape/:id', (req, res) => {
+    const client = new Client(connectionData);
+    client.connect()
+    .then(() => {
+        return client.query('select v.*, s.sabor, m.modelo, mc.marca, m.precio from vape v inner join sabor s on v.fkid_sabor = s.id_sabor inner join modelo m on v.fkid_modelo = m.id_modelo inner join marca mc on m.fkid_marca = mc.id_marca where v.id_vape = $1;', [req.params.id]);
     })
     .then(result => {
         res.status(200).send(result.rows);
