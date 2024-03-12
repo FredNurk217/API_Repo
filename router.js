@@ -107,11 +107,11 @@ router.get('/vapes', (req, res) => {
 });
 
 //GET single vape
-router.get('/vape/:id', (req, res) => {
+router.get('/modelo/vape/:id', (req, res) => {
     const client = new Client(connectionData);
     client.connect()
     .then(() => {
-        return client.query('select v.*, s.sabor, m.modelo, mc.marca, m.precio from vape v inner join sabor s on v.fkid_sabor = s.id_sabor inner join modelo m on v.fkid_modelo = m.id_modelo inner join marca mc on m.fkid_marca = mc.id_marca where v.id_vape = $1;', [req.params.id]);
+        return client.query('select v.*, s.sabor, m.modelo, mc.marca, m.precio from vape v inner join sabor s on v.fkid_sabor = s.id_sabor inner join modelo m on v.fkid_modelo = m.id_modelo inner join marca mc on m.fkid_marca = mc.id_marca where m.id_modelo = $1;', [req.params.id]);
     })
     .then(result => {
         res.status(200).send(result.rows);
